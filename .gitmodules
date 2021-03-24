@@ -1,0 +1,6 @@
+[submodule "notetaking"]
+	path = notetaking
+	url = ./pdfs/Ayudantias/local_packages/notetaking
+[submodule "pdfs/Ayudantias/local_packages/notetaking"]
+	path = pdfs/Ayudantias/local_packages/notetaking
+	url = https://github.com/N9199/Notetaking-LaTeX.git
