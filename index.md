@@ -8,6 +8,6 @@ title: Índice
 
 ## Ayudantías
 
-- Ayudantia 01 (Aritmética Modular) - [Enunciado](pdfs/Enunciados/Enunciados01.pdf)
+- Ayudantia 01 (Aritmética Modular) - [Enunciado](pdfs/Enunciados/Enunciado01.pdf)
 
 [Acerca de](about)

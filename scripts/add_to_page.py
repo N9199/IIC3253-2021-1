@@ -38,9 +38,9 @@ for i in range(len(enunciados)):
         temp1 = list(
             map(lambda x: x[10:-1], re3.findall(f.read())))[0]
     if enunciados[i] == soluciones[j]:
-        temp = f"- Ayudantia {enunciados[i]:02d} ({temp1}) - [Enunciado](pdfs/Enunciados/Enunciados{enunciados[i]:02d}.pdf) - [Solución](pdfs/Soluciones/Solucion{soluciones[j]:02d}.pdf)"
+        temp = f"- Ayudantia {enunciados[i]:02d} ({temp1}) - [Enunciado](pdfs/Enunciados/Enunciado{enunciados[i]:02d}.pdf) - [Solución](pdfs/Soluciones/Solucion{soluciones[j]:02d}.pdf)"
     else:
-        temp = f"- Ayudantia {enunciados[i]:02d} ({temp1}) - [Enunciado](pdfs/Enunciados/Enunciados{enunciados[i]:02d}.pdf)"
+        temp = f"- Ayudantia {enunciados[i]:02d} ({temp1}) - [Enunciado](pdfs/Enunciados/Enunciado{enunciados[i]:02d}.pdf)"
     out.append(temp)
 
 curr[6] = f"Última actualización: {datetime.today().strftime('%m/%d')} ({', '.join(delta)})"
