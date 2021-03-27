@@ -1,0 +1,111 @@
+\documentclass{ayudantia}
+
+\title{Ayudantía 01}
+\subtitle{Aritmética Modular}
+\date{2021-03-24}
+\course{IIC3253 -- Criptografía}
+\faculty{Escuela de Ingeniería}
+\department{Departamento de Ciencia de la Computación}
+% Comment for final compile
+\ifx\condition\undefined
+\def\condition{2}
+\fi
+
+\ifx\condition\undefined
+\immediate\write18{ pdflatex -synctex=1 -output-directory="../Enunciados" --jobname="Enunciado\jobname" "\gdef\string\condition{0} \string\input\space\jobname"} 
+\immediate\write18{ pdflatex -synctex=1 -output-directory="../Soluciones" --jobname="Solucion\jobname" "\gdef\string\condition{1} \string\input\space\jobname"} 
+
+\immediate\write18{ cd "../Enunciados" && rm *.aux *.log *.out}
+\immediate\write18{ cd "../Soluciones" && rm *.aux *.log *.out}
+
+\expandafter\stop
+\fi
+
+\ifcase\condition
+\excludecomment{ans}
+\or
+\includecomment{ans}
+\or
+\includecomment{ans}
+\fi
+
+\begin{document}
+\maketitle
+\begin{defn}[Divisibilidad]
+    Para \(a,b\in\set{Z}\) se dice que \(a\) divide a \(b\), denotado como \(a\mid b\) si y solo si existe un \(m\in\set{Z}\) tal que \(b=ma\).
+\end{defn}
+
+\begin{thm}[Algoritmo de la división]
+    Dados \(p,q\in\set{Z}\) existen únicos \(d,r\in\set{Z}\) tales que \(p=dq+r\) y \(0\leq r<\abs{q}\).
+\end{thm}
+
+\begin{defn}[Congruencia Modulo \(n\)]
+    Dado \(a,b,n\in\set{Z}\) se dice que \(a\equiv b\mod n\) si y solo si \(n\mid b-a\).
+\end{defn}
+\begin{thm}
+    La congruencia modulo \(n\) es una relación de equivalencia.
+\end{thm}
+\begin{proof}\
+    \begin{itemize}
+        \item[Simétrica:] Sean \(a,b\in\set{Z}\) tales que \(a\equiv b\mod n\), entonces se tiene que \(n\mid b-a\) por lo que \(n\mid a-b\), con lo que se tiene que \(b\equiv a\mod n\).
+        \item[Refleja:] Sea \(a\in\set{Z}\) se tiene que \(n\mid 0=a-a\)
+        \item[Transitiva:] Sean \(a,b,c\in\set{Z}\) tales que \(a\equiv b\mod n\) y \(b\equiv c\mod n\), entonces se tiene que \(n\mid b-a\) y \(n\mid c-b\), por lo que \(n\mid (b-a)+(c-b)=c-a\), y con eso se concluye que \(a\equiv c\mod n\). 
+    \end{itemize}
+\end{proof}
+
+
+\begin{ejm}
+    Se tiene que \(3\equiv 15\mod 12\), ya que \(15-3=12\) y \(12\mid 12\). Esto es un ejemplo que es clásico, ya que uno puede verlo en el reloj, pero hay varios otros:
+    \begin{itemize}
+        \item \(4\equiv 17\mod 13\)
+        \item \(21\equiv 201\mod 10\)
+        \item \(-5\equiv 20\mod 25\)
+        \item \(-1\equiv n-1\mod n\)
+        \item Dado \(k\not\equiv 0\mod 5\), \(k^4\equiv 1\mod 5\) (Ejercicio: usando esta ayudantía demuestre esto.)
+    \end{itemize}
+\end{ejm}
+
+
+\begin{defn}[Representante Modulo \(n\)]
+    Dado \(a\in\set{Z}\), se dice que \(r\in\{0,\dots,\abs{n}-1\}\) es un representante de \(a\) modulo \(n\) si y solo si \(a\equiv r\mod n\). Se nota que dado \(a\) \(r\) es único por el algoritmo de la división.
+\end{defn}
+
+\begin{lem}
+    Dados \(a,b\in\set{Z}\) tales que \(a\equiv b\mod n\), se tiene que los representantes de \(a\) y \(b\) modulo n, \(r_a,r_b\), cumplen que \(r_a=r_b\).
+\end{lem}
+\begin{proof}
+    Sean \(a,b\in\set{Z}\) tales que \(a\equiv b\mod n\), y sean \(r_a\) y \(r_b\) sus representantes modulo \(n\), entonces se tiene que \(n\mid a-r_a\) y \(n\mid b-r_b\), con lo que se tiene que \(n\mid (b-a)+(r_b-r_a)\), y como \(n\mid b-a\), entonces se tiene que \(n\mid r_b-r_a\). Notemos además que \(r_b-r_a\in\{-(\abs{n}-1),\dots,(\abs{n}-1)\}\), y como el único \(x\in\{-(\abs{n}-1),\dots,(\abs{n}-1)\}\) tal que \(n\mid x\) es \(x=0\), se tiene que \(r_b-r_a=0\), por lo que \(r_a=r_b\).
+\end{proof}
+
+\begin{thm}
+    Dados \(a,b,c,d\in\set{Z}\) tales que \(a\equiv b\mod n\) y \(c\equiv d\mod n\), 
+    \begin{enumerate}
+        \item \(a+c\equiv b+d\mod n\).
+        \item \(a\cdot c\equiv d\cdot d\mod n\).
+    \end{enumerate}
+\end{thm}
+
+\begin{proof}
+    1) Recordando el lema ya demostrado, sabemos que \(r_a=r_b\) y \(r_c=r_d\), por lo que \(r_a+r_c=r_b+r_d\), más aún se tiene que \(a+b\equiv r_a+r_c\equiv r_b+r_d\equiv b+d\mod n\), ya que \(n\mid (r_a-a)+(r_c-c)\) y \(n\mid (r_b-b)+(r_d-d)\), con lo que por transitividad se tiene que \(a+b\equiv c+d\mod n\).
+
+    2) Queda como ejercicio.
+\end{proof}
+
+\begin{thm}[Criterios de Divisibilidad]
+    Dado \(a=\sum_{i=0}^na_i\cdot 10^i\)
+    \begin{enumerate}
+        \item \(3\mid a\) si y solo si \(3\mid\sum_{i=0}^na_i\)
+        \item \(9\mid a\) si y solo si \(9\mid\sum_{i=0}^na_i\)
+        \item \(11\mid a\) si y solo si \(11\mid\sum_{i=0}^n(-1)^ia_i\)
+    \end{enumerate}
+\end{thm}
+
+\begin{proof}
+    \begin{enumerate}
+        \item Se nota que \(3\mid a\) si y solo si \(a\equiv 0\mod 3\), por lo que \(\sum_{i=0}^na_i10^i\equiv\sum_{i=0}^na_i1^i\equiv\sum_{i=0}^na_i\mod n\), lo que es cierto si y solo si \(3\mid\sum_{i=0}^na_i\).
+        \item Ejercicio.
+        \item Ejercicio.
+    \end{enumerate}
+\end{proof}
+
+\end{document}

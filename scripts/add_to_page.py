@@ -36,7 +36,7 @@ for i in range(len(enunciados)):
         delta.append(f"Solución {soluciones[i]:02d}")
     with open(f"../pdfs/Ayudantias/{enunciados[i]:02d}.tex") as f:
         temp1 = list(
-            map(lambda x: x[10:-2], re3.findall(f.read())))[0]
+            map(lambda x: x[10:-1], re3.findall(f.read())))[0]
     if enunciados[i] == soluciones[j]:
         temp = f"- Ayudantia {enunciados[i]:02d} ({temp1}) - [Enunciado](pdfs/Enunciados/Enunciados{enunciados[i]:02d}.pdf) - [Solución](pdfs/Soluciones/Solucion{soluciones[j]:02d}.pdf)"
     else:
