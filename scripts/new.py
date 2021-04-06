@@ -2,7 +2,7 @@ import json
 import os
 
 from datetime import datetime
-
+os.chdir(os.path.dirname(__file__))
 with open("variables.json") as f:
     variables = json.load(f)
 print(variables)

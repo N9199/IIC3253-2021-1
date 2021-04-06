@@ -2,6 +2,9 @@ import os
 import re
 from datetime import datetime
 
+
+os.chdir(os.path.dirname(__file__))
+
 enunciados = list(map(lambda x: int(
     x[9:-4]), filter(lambda x: x[-4:] == ".pdf", os.listdir("../pdfs/Enunciados"))))
 soluciones = list(map(lambda x: int(
@@ -28,16 +31,16 @@ out = []
 
 j = 0
 for i in range(len(enunciados)):
-    while int(enunciados[i]) > int(soluciones[j]) and j+1 < len(soluciones):
+    while j+1 < len(soluciones) and int(enunciados[i]) > int(soluciones[j]):
         j += 1
     if int(enunciados[i]) not in curr_enunciados:
         delta.append(f"Enunciado {enunciados[i]:02d}")
-    if int(soluciones[i]) not in curr_soluciones:
-        delta.append(f"Solución {soluciones[i]:02d}")
+    if soluciones and int(soluciones[j]) not in curr_soluciones:
+        delta.append(f"Solución {soluciones[j]:02d}")
     with open(f"../pdfs/Ayudantias/{enunciados[i]:02d}.tex") as f:
         temp1 = list(
             map(lambda x: x[10:-1], re3.findall(f.read())))[0]
-    if enunciados[i] == soluciones[j]:
+    if soluciones and enunciados[i] == soluciones[j]:
         temp = f"- Ayudantia {enunciados[i]:02d} ({temp1}) - [Enunciado](pdfs/Enunciados/Enunciado{enunciados[i]:02d}.pdf) - [Solución](pdfs/Soluciones/Solucion{soluciones[j]:02d}.pdf)"
     else:
         temp = f"- Ayudantia {enunciados[i]:02d} ({temp1}) - [Enunciado](pdfs/Enunciados/Enunciado{enunciados[i]:02d}.pdf)"

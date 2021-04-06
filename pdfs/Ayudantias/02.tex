@@ -1,0 +1,66 @@
+\documentclass{ayudantia}
+
+\title{Ayudantía 02}
+\subtitle{Paradoja de los Cumpleaños}
+\date{2021-04-06}
+\course{IIC3253 -- Criptografía}
+\faculty{Escuela de Ingeniería}
+\department{Departamento de Ciencia de la Computación}
+% Comment for final compile
+\ifx\condition\undefined
+\def\condition{2}
+\fi
+
+\ifx\condition\undefined
+\immediate\write18{ pdflatex -synctex=1 -output-directory="../Enunciados" --jobname="Enunciado\jobname" "\gdef\string\condition{0} \string\input\space\jobname"} 
+\immediate\write18{ pdflatex -synctex=1 -output-directory="../Soluciones" --jobname="Solucion\jobname" "\gdef\string\condition{1} \string\input\space\jobname"} 
+
+\immediate\write18{ cd "../Enunciados" && rm *.aux *.log *.out}
+\immediate\write18{ cd "../Soluciones" && rm *.aux *.log *.out}
+
+\expandafter\stop
+\fi
+
+\ifcase\condition
+\excludecomment{ans}
+\or
+\includecomment{ans}
+\or
+\includecomment{ans}
+\fi
+
+\begin{document}
+\maketitle
+
+Dado una función de \texttt{HASH} con output space \(O\) (\(n=\abs{O}\)), queremos encontrar dos cosas:
+\begin{enumerate}
+    \item Un \(d\in\set{N}\) ``pequeño'' tal que \(\set{P}[X=d]\geq\frac12\), donde \(\set{P}[X=d]\) es la probabilidad de que haya al menos dos colisiones después de \(d\) intentos distintos.
+    \item Un \(d\in\set{N}\) ``pequeño'' tal que \(\set{E}[Y_d]\geq1\), donde \(Y_d\) es la variable aleatoria que cuenta la cantidad de colisiones  después de \(d\) intentos distintos.
+\end{enumerate}
+
+\section*{\(\set{P}[X=d]\geq\frac12\)}
+Para el primero notemos que es más fácil calcular \(1-\set{P}[X=i]\) (la probabilidad de que no hayan colisiones en \(i\) intentos):
+\begin{equation*}
+    1-\set{P}[X=i]=\prod_{j=0}^{i-1}\paren{1-\frac{j}{n}}
+\end{equation*}
+Usando esto, y el hecho de que \(\mathrm{e}^x\geq1+x\), se tienen las siguientes desigualdades
+\begin{align*}
+    1-\set{P}[X=i]&=\prod_{j=0}^{i-1}\paren{1-\frac{j}{n}}\\
+    &\leq\prod_{j=0}^{i-1}\text{exp}\paren{-\frac{j}{n}}\\
+    &\leq\text{exp}\paren{\sum_{j=0}^{i-1}-\frac{j}{n}}\\
+    &\leq\text{exp}\paren{\frac{-d(d-1)}{2n}}\\
+    &\leq\text{exp}\paren{\frac{-(d-1)^2}{2n}}\\
+\end{align*}
+Por lo que si \(\text{exp}\paren{\frac{-(d-1)^2}{2n}}\leq\frac12\) se tiene que \(\set{P}[X=d]\geq\frac12\). Desarrollemos la primera expresión:
+\begin{align*}
+    \text{exp}\paren{\frac{-(d-1)^2}{2n}}&\leq\frac12\\
+    \frac{-(d-1)^2}{2n}&\leq\log\frac12\\
+    (d-1)^2&\geq-2n\log\frac12\\
+    (d-1)^2&\geq2n\log2\\
+    d-1&\geq\sqrt{2n\log2}\\
+    d&\geq\sqrt{2n\log2}+1\\
+\end{align*}
+Con lo que tomando \(d=\ceil{\sqrt{2n\log2}+1}\) se tiene la desigualdad.
+\section*{\(\set{E}[Y_d]\geq1\)}
+Para calcular el segundo, notemos que \(Y_d=\sum_{i=1}^d\sum_{j=i+1}^dX_{ij}\) donde \(\set{P}[X_{ij}=1]=\frac1n\) y \(\set{P}[X_{ij}=k]=0\) para \(k\neq1\). Por lo que \(\set{E}[Y_d]=\sum_{i=1}^d\sum_{j=i+1}^d\set{E}[X_{ij}]=\frac{d(d-1)}{2n}\geq\frac{(d-1)^2}{2n}\), por lo que tomando \(d=\ceil{\sqrt{2n}+1}\) es suficiente.
+\end{document}
