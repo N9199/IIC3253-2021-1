@@ -46,7 +46,7 @@ for i in range(len(enunciados)):
         temp = f"- Ayudantia {enunciados[i]:02d} ({temp1}) - [Enunciado](pdfs/Enunciados/Enunciado{enunciados[i]:02d}.pdf)"
     out.append(temp)
 
-curr[6] = f"Última actualización: {datetime.today().strftime('%m/%d')} ({', '.join(delta)})"
+curr[6] = f"Última actualización: {datetime.today().strftime('%d/%m')} ({', '.join(delta)})"
 curr = curr[:10]+out+curr[-3:]
 
 with open("../index.md", 'w') as f:

@@ -1,0 +1,183 @@
+\documentclass{ayudantia}
+
+\title{Ayudantía 03}
+\subtitle{Combinatoria y Probabilidad}
+\date{2021-04-07}
+\course{IIC3253 -- Criptografía}
+\faculty{Escuela de Ingeniería}
+\department{Departamento de Ciencias de la Computación}
+% Comment for final compile
+\ifx\condition\undefined
+\def\condition{2}
+\fi
+
+\ifx\condition\undefined
+\immediate\write18{ pdflatex -synctex=1 -output-directory="../Enunciados" --jobname="Enunciado\jobname" "\gdef\string\condition{0} \string\input\space\jobname"} 
+\immediate\write18{ pdflatex -synctex=1 -output-directory="../Soluciones" --jobname="Solucion\jobname" "\gdef\string\condition{1} \string\input\space\jobname"} 
+
+\immediate\write18{ cd "../Enunciados" && rm *.aux *.log *.out}
+\immediate\write18{ cd "../Soluciones" && rm *.aux *.log *.out}
+
+\expandafter\stop
+\fi
+
+\ifcase\condition
+\excludecomment{ans}
+\or
+\includecomment{ans}
+\or
+\includecomment{ans}
+\fi
+
+\begin{document}
+\maketitle
+\section{Combinatoria}
+La combinatoria es el área de las Matemáticas que principalmente trata como contar cosas, hay varios resultados útiles para este curso, varios de los cuales estarán en está ayudantía.
+\subsection{Notación Básica}
+\begin{defn}[Cardinalidad]
+    Dado un conjunto \(A\) se denota \(\abs{A}\) a su cardinalidad. Para conjuntos finitos \(\abs{A}\) es un número natural (entero mayor o igual a cero).
+\end{defn}
+\subsection{Teoremas Básicos}
+No se presentará demostración de los siguientes teoremas.
+\begin{thm}[Biyección]
+    Dados dos conjuntos \(A\) y \(B\), existe \(f:A\rightarrow B\) biyectiva si y solo si \(\abs{A}=\abs{B}\).
+\end{thm}
+\begin{thm}[Exclusión/Inclusión]
+    Dado dos conjuntos finitos \(A\) y \(B\), se tiene que 
+    \begin{equation*}
+        \abs{A\cup B}=\abs{A}+\abs{B}-\abs{A\cap B}.
+    \end{equation*}
+\end{thm}
+\begin{thm}[Principio Múltiplicativo]
+    Dado dos conjuntos finitos \(A\) y \(B\), se tiene que
+    \begin{equation*}
+        \abs{A\times B}=\abs{A}\cdot\abs{B}
+    \end{equation*}
+\end{thm}
+\begin{thm}[Principio de la División]
+    Dado dos conjuntos finitos \(A\), \(B\) y una función \(f:A\rightarrow B\) tal que para todo \(y\in B\) su preimagén cumple que \(\abs{f^-1\{y\}}=d\), entonces se tiene que
+    \begin{equation*}
+        \abs{B}=\frac{\abs{A}}{d}
+    \end{equation*}
+\end{thm}
+\begin{thm}[Principio de Palomar]
+    Dado dos conjuntos no vacíos \(A\) y \(B\) tales que \(\abs{A}>\abs{B}\), no existe una función inyectiva de \(A\) a \(B\), equivalentemente para toda función \(f:A\rightarrow B\) existen dos elementos distintos \(x,y\in A\) tales que \(f(x)=f(y)\).
+\end{thm}
+\begin{thm}[Inducción]
+    Dado alguna proposición \(P(n)\) sobre un número natural \(n\), sí se tiene que \(P(0)\wedge(\forall n\in\set{N}P(n)\implies P(n+1))\), entonces se tiene que \(\forall n\in\set{N}P(n)\). 
+\end{thm}
+\subsection{Permutaciones}
+\begin{defn}[Permutación]
+    Dado un conjunto \(A\) el conjunto de permutaciones \(S_A\) consiste en las biyecciones de \(A\) en si mismo.
+\end{defn}
+\begin{remark}
+    Para efectos del curso, solo se considera permutaciones donde \(A\) es un conjunto finito, más aún, en general se asume que \(A=\{0,1\}^n\) para algún \(n\), o sea, el conjunto de binary strings de largo \(n\). Pero para está ayudantía solo se asume que \(A\) es finito, salvo que se diga lo contrario.
+\end{remark}
+\begin{thm}
+    Si \(\abs{A}=n\), entonces \(\abs{S_A}=n!\)
+\end{thm}
+\begin{proof}
+    Se usa inducción:
+    \begin{itemize}
+        \item[\(n=1\)] Como \(\abs{A}=1\), la única función biyectiva de \(A\) en si misma es la identidad, por lo que \(\abs{S_A}=1\).
+        \item[\(n\implies n+1\)] Dado \(\abs{A}=n+1\), se escribe \(A=A'\cup\{a\}\) donde \(\abs{A'}=n\), toda permutación \(\pi\) en \(S_{A'}\) se puede extender de dos formas a una permutación en \(S_A\), fijando \(a\) (i.e. \(\pi(a)=a\)) y no fijando \(a\) (i.e. \(\pi(a)\neq a\)). El primer caso nos da \(\abs{S_{A'}}\) permutaciones, que por hipótesis inductiva son \(n!\). El segundo caso nos da \(\abs{A'}\cdot\abs{S_{A'}}\), ya que \(\pi(a)\) tiene que ser un elemento de \(A'\)\footnote{Para extender en este caso se toma el elemento \(b\in A'\) tal que \(pi(b)=pi(a)\), y se redefine \(\pi(b)=a\).}, por lo que por hipotesis inductiva son \(n\cdot n!\). Juntando ambos casos nos da \(\abs{S_A}=n!+n\cdot n! =(n+1)n! =(n+1)!\).
+    \end{itemize}
+\end{proof}
+\begin{remark}
+    Se denota \(S_n\) a las permutaciones sobre el conjunto \(\{1,\dots, n\}\), y se nota que todo resultado sobre \(S_n\) se extiende naturalmente a \(S_A\) cuando \(\abs{A}=n\).
+\end{remark}
+
+\begin{thm}
+    El conjunto \(S_{n,k}=\{\pi\in S_n:\forall i\leq k\, \pi(i)=i\}\) tiene \((n-k)!\) elementos. Y de forma más general dados \(a_1,\dots, a_k\in\{1,\dots, n\}\) se tiene que \(\abs{\{\pi\in S_n:\forall i\leq k\, \pi(i)=a_i\}}=(n-k)!\).
+\end{thm}
+\begin{proof}
+    Se toma \(f:S_{n-k}\rightarrow S_{n,k}\) donde \(f(\pi)\) cumple que \(\forall i,j\leq n-k\) \(\pi(i)=j\) si y solo si \(f(\pi)(i+k)=j+k\), y \(\forall i\leq k\, f(\pi)(i)=i\). Se nota que \(f\) es biyección, por lo que \(\abs{S_{n,k}}=\abs{S_{n-k}}=(n-k)!\).
+
+    La segunda parte del teorema de una extensión natural de la demostración anterior.
+\end{proof}
+
+\subsection{Variación}
+\begin{defn}[Variación]
+    Se denota \(P(n,k)\) a la cardinalidad de \(f:A\rightarrow B\mid f\text{ inyectiva}\), donde \(\abs{A}=k\), \(\abs{B}=n\) y \(k\leq n\).
+\end{defn}
+\begin{thm}
+    Dado \(n,k\in\set{N}\) tales que \(k\leq n\) se tiene que
+    \begin{equation*}
+        P(n,k)=\frac{n!}{(n-k)!}
+    \end{equation*}
+\end{thm}
+\begin{proof}
+    Se usa inducción sobre \(k\). Para el caso \(k=0\), solo hay una función inyectiva (la función con dominio vacío). Para el caso inductivo, se tiene \(A\) de cardinalidad \(k+1\), sea \(a_0\in A\), entonces una función inyectiva de \(A\) a \(B\) se construye eligiendo una imagén \(b_0\in B\) para \(a_0\), y eligiendo una función inyectiva de \(A\setminus\{a_0\}\) a \(B\setminus\{b_0\}\). Hay \(n\) formas de elegir \(b_0\), y como \(\abs{A\setminus\{a_0\}}=k-1\) y \(\abs{B\setminus\{b_0\}}=n-1\), por hipótesis inductiva hay \(\frac{(n-1)!}{((n-1)-(k-1))!}\) formas de elegir una función inyectiva, se tiene lo pedido.
+\end{proof}
+
+\begin{cor}
+    Dado \(S\) un conjunto finito, con \(\abs{S}=n\). La cantidad de formas de elegir \(k\) elementos de \(S\) sin repeticiones es \(\frac{n!}{(n-k)!}\).
+\end{cor}
+\begin{proof}
+    Elegir \(k\) elementos de \(S\) sin repeticiones es equivalente a elegir un función inyectiva desde \(\{1,\ldots,k\}\) a \(S\), por lo que por el teorema anterior se tiene lo pedido.
+\end{proof}
+
+\subsection{Combinación}
+\begin{defn}[Combinación]
+    Se denota \(C(n,k)=\binom{n}{k}\) a la cardinalidad de \(\{S\subseteq A:\abs{S}=k\}\) donde \(\abs{A}=n\). De forma más coloquial ``de cuantas formas se pueden elegir \(k\) elementos de \(n\)''. Se nota que \(\binom{n}{0}=\binom{n}{n}=1\).
+\end{defn}
+
+\begin{thm}
+    Dado \(n,k\in\set{N}\) tales que \(1\leq k\leq n\), se tiene que
+    \begin{equation*}
+        \binom{n}{k}=\binom{n-1}{k-1}+\binom{n-1}{k}\text{ y }\binom{n}{k}=\frac{n!}{k!(n-k)!}
+    \end{equation*}
+\end{thm}
+
+\begin{proof}
+    Dado un conjunto \(A\) de cardinalidad \(n\), se quiere elegir un subconjunto \(S\) de cardinalidad \(k\), este conjunto de puede construir de la siguiente forma, tomas un elemento \(a_0\in A\) y lo agregas, así queda el problema de elegir un subconjunto de cardinalidad \(k-1\) del conjunto \(A\setminus\{a_0\}\), o no lo agregas y tienes que elegir un subconjunto de cardinalidad \(k\) del conjunto \(A\setminus\{a_0\}\). Con lo que se tiene que \(\binom{n}{k}=\binom{n-1}{k-1}+\binom{n-1}{k}\).
+
+    Se nota que \(P(n,k)=C(n,k)\cdot P(k,k)\), en otras palabras elegir \(k\) elementos de \(n\) sin repetición es lo mismo que elegir un subconjunto de cardinalidad \(k\) y ordenarlo de alguna forma. Por lo tanto \(\binom{n}{k}=C(n,k)=\frac{P(n,k)}{P(k,k)}=\frac{n!}{(n-k)!}\cdot\frac1{k!}=\frac{n!}{k!(n-k)!}\).
+\end{proof}
+
+\section{Probabilidad}
+La probabilidad es el área de las Matemáticas que principalmente trata de cuantificar númericamente cuan probable es un evento, o cuan probable una proposición es verdad.
+\begin{remark}
+    Para efectos del curso se verá una versión limitada de probabilidad, específicamente probabilidad finita, donde se tomarán dos conjuntos finitos \(A\subseteq B\), donde \(A\) es un evento en el universo \(B\). Una consecuencia de eso es que \(P(A)=\frac{\abs{A}}{\abs{B}}\).
+\end{remark}
+\subsection{Notación}
+\begin{defn}
+    Se denota \(\underset{s\leftarrow B}{P}(A(s))\) a la probabilidad del evento \(A(s)\) que depende de un \(s\) elegido con alguna distribución de \(B\).
+\end{defn}
+\subsection{Teoremas y Definiciones Básicas}
+No se presentará demostración de los siguientes teoremas.
+\begin{defn}[Eventos Independientes]
+    Se dice que dos eventos \(A\) y \(B\) son independientes si y solo si \(P(A\cap B)=P(A)\cdot P(B)\).
+\end{defn}
+\begin{defn}[Eventos Mutuamente Excluyentes]
+    Se dice que dos eventos \(A\) y \(B\) son mutuamente excluyentes si y solo si \(P(A\cap B)=0\).
+\end{defn}
+\begin{thm}
+    Dado dos eventos \(A\) y \(B\) se tiene queda
+    \begin{equation*}
+        P(A\cup B)=P(A)+P(B)-P(A\cap B)
+    \end{equation*}
+\end{thm}
+\begin{defn}[Probabilidad Condicional]
+    Dado dos eventos \(A\) y \(B\) se denota \(P(A\mid B)\) a la probabilidad de que pase el evento \(A\) dado que pasa el evento \(B\). Más aún \(P(A\mid B)=\frac{P(A\cup B)}{P(B)}\).
+\end{defn}
+\begin{thm}[Bayes]
+    Se tiene que
+    \begin{equation*}
+        P(A\mid B)=\frac{P(B\mid A)\cdot P(A)}{P(B)}
+    \end{equation*}
+\end{thm}
+\subsection{Problemas}
+\begin{thm}
+    Dado \(w_1,\ldots,w_k\in A\) y \(w_1',\ldots,w_k'\in A\), tal que \(i\neq j\implies (w_i\neq w_j)\wedge (w_i'\neq w_j')\), donde \(k\leq\abs{A}=n\). Se tiene que
+    \begin{equation*}
+        \underset{\pi\leftarrow S_A}{P}(\forall i\, \pi(w_i)=w_i')=\frac{(n-k)!}{n!}
+    \end{equation*}
+\end{thm}
+\begin{proof}
+    Sea \(B=\{\pi\in S_A\mid \forall i\, \pi(w_i)=w_i'\}\), por teorema 1.8 \(\abs{B}=(n-k)!\), por lo que se tiene lo pedido.
+\end{proof}
+\begin{cor}
+    La probabilidad de que una permutación fije \(k\) elementos es \(\frac1{k!}\).
+\end{cor}
+\end{document}
