@@ -1,0 +1,100 @@
+\documentclass{ayudantia}
+
+\title{Ayudantía 04}
+\subtitle{Aritmética Modular}
+\date{2021-04-14}
+\course{IIC3253 -- Criptografía}
+\faculty{Escuela de Ingeniería}
+\department{Departamento de Ciencias de la Computación}
+% Comment for final compile
+\ifx\condition\undefined
+\def\condition{2}
+\fi
+
+\ifx\condition\undefined
+\immediate\write18{ pdflatex -synctex=1 -output-directory="../Enunciados" --jobname="Enunciado\jobname" "\gdef\string\condition{0} \string\input\space\jobname"} 
+\immediate\write18{ pdflatex -synctex=1 -output-directory="../Soluciones" --jobname="Solucion\jobname" "\gdef\string\condition{1} \string\input\space\jobname"} 
+
+\immediate\write18{ cd "../Enunciados" && rm *.aux *.log *.out}
+\immediate\write18{ cd "../Soluciones" && rm *.aux *.log *.out}
+
+\expandafter\stop
+\fi
+
+\ifcase\condition
+\excludecomment{ans}
+\or
+\includecomment{ans}
+\or
+\includecomment{ans}
+\fi
+
+\begin{document}
+\maketitle
+\section{Inverso Modular}
+\begin{thm}[Algoritmo Extendido de Euclides]
+    Dado \(a,b\in\set{Z}\) el algoritmo devuelve \(x,y,g\in\set{Z}\) tales que \(ax+by=g\) y \(g=\gcd(a,b)\), en \(\BigO{\log(\min(a,b))}\) pasos.
+\end{thm}
+
+\begin{cor}[Bezout]
+    Dado \(a,b\in\set{Z}\) existen \(x,y,g\in\set{Z}\) tales que \(ax+by=g\) y \(g=\gcd(a,b)\).
+\end{cor}
+
+\begin{defn}[Inverso Modular]
+    Dado \(a,b\in\set{Z}\), se dice que \(b\) es el inverso modular de \(a\) si y solo si \(ab\equiv 1\mod n\). En general \(b\) se denota como \(a^{-1}\).
+\end{defn}
+
+\begin{prob}
+    Demuestre que el inverso modular es único modulo \(n\).
+\end{prob}
+
+\begin{thm}[Inverso Modular]
+    Dado \(a\in\set{Z}\), \(a\) tiene inverso modular si y solo si \(\gcd(a,n)=1\).
+\end{thm}
+Para demostrar el teorema se demostrará un lema, respecto al siguiente concepto.
+\begin{defn}[Divisor de Cero]
+    Sea \(a\in\set{Z}\) tal que \(a\not\equiv0\mod n\), se dice que \(a\) es divisor de cero, si y solo si existe un \(b\in\set{Z}\) tal que \(b\not\equiv 0\mod n\) y \(ab\equiv0\mod n\).
+\end{defn}
+
+\begin{lem}
+    Sea \(a\in\set{Z}\) un divisor de cero, entonces \(a\) no tiene inverso modular.
+\end{lem}
+\begin{proof}
+    Se asume por contradicción que \(a\) tiene inverso modular, sea \(b\in\set{Z}\) tal que \(b\not\equiv0\mod n\) y \(ab\equiv0\mod n\). Entonces se tiene que
+    \begin{align*}
+        a\cdot a^{-1}&\equiv 1\mod n\\
+        b(a\cdot a^{-1})&\equiv b\mod n\\
+        (ba)a^{-1}&\equiv b\mod n\\
+        0\cdot a^{-1}&\equiv b\mod n\\
+        0&\equiv b\mod n\\
+    \end{align*}
+    lo cual es una contradicción.
+\end{proof}
+Volviendo al teorema de Inverso Modular:
+\begin{proof}
+    \(\underline{\impliedby }\) Por Bezout se tiene que existen \(x,y\in\set{Z}\) tales que \(ax+ny=1\), por lo que \(n\mid 1-ax\), o sea, \(ax\equiv=1\mod n\), lo que nos dice que \(a\) tiene inverso modular.
+    
+    \(\underline{\implies}\) Usando contrapositiva se tiene que \(\gcd(a,b)=g>1\), como \(g\mid n\) y \(g\mid a\), entonces \(\frac{n}{g}\in\set{Z}\) y \(\frac{a}{g}\in\set{Z}\). Por lo que \(n\mid\frac{an}g\), pero \(n\nmid \frac{n}g\), con lo que se tiene que \(a\cdot\frac{n}g\equiv 0\mod n\), por lo que \(a\) es divisor de cero, y usando el lema anterior se tiene que \(a\) no tiene inverso modular.
+\end{proof}
+\section{Congruencias Lineales}
+\begin{defn}[Congruencia Lineal]
+    Dado \(a,b,c\in\set{Z}\), se dice que \(ax+b\equiv c\mod n\) es una congruencia lineal.
+\end{defn}
+\begin{remark}
+    Es claro que toda congruencia lineal se puede reducir a la forma \(ax\equiv b\mod n\).
+\end{remark}
+\begin{thm}
+    Las congruencias lineales de la forma \(ax\equiv b\mod n\) tienen solución si y solo si \(\gcd(a,n)\mid b\) o \(b\equiv 0\mod n\).
+\end{thm}
+\begin{proof}
+    \(\underline{\impliedby }\) Sea \(g=\gcd(a,n)\), si \(g=1\), entonces la congruencia tiene como solución \(x\equiv a^{-1}b\mod n\). Si \(g\mid b\) y \(g>1\), entonces se toma \(a'=a/g\), \(b'=b/g\) y \(n'=n/g\), se nota que \(a'x\equiv b'\mod n'\) tiene solución, ya que \(\gcd(a',n')=1\), por lo que \(ax\equiv b\mod n\) tiene solución. Si \(b\equiv 0\mod n\), entonces \(x\equiv0\mod n\) es solución.
+
+    \(\underline{\implies}\) Usando contrapositiva y contradicción se tiene que \(g\) no divide a \(b\) y \(b\not\equiv 0\mod n\). Se ve lo siguiente
+    \begin{align*}
+        ax\equiv b\mod n&\iff n\mid ax-b\\
+        &\iff ny=ax-b\\
+        &\iff b=ax-ny,
+    \end{align*}
+    más aún \(g\mid a\) y \(g\mid n\), por lo que \(g\mid ax-ny\), pero eso es lo mismo que \(g\mid b\), lo que es una contradicción.
+\end{proof}
+\end{document}
