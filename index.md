@@ -4,7 +4,7 @@ title: Índice
 
 # {{page.title}}
 
-Última actualización: 27/05 (Enunciado 08)
+Última actualización: 27/05 (Enunciado 09)
 
 ## Ayudantías
 
@@ -13,5 +13,6 @@ title: Índice
 - Ayudantia 03 (Combinatoria y Probabilidad) - [Enunciado](pdfs/Enunciados/Enunciado03.pdf)
 - Ayudantia 04 (Aritmética Modular) - [Enunciado](pdfs/Enunciados/Enunciado04.pdf)
 - Ayudantia 08 (Teorema Esquema PRG) - [Enunciado](pdfs/Enunciados/Enunciado08.pdf)
+- Ayudantia 09 (Euler-Fermat y Teorema Fundamental de la Aritmética) - [Enunciado](pdfs/Enunciados/Enunciado09.pdf)
 
 [Acerca de](about)

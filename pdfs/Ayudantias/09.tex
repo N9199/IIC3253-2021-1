@@ -1,7 +1,7 @@
 \documentclass{ayudantia}
 
 \title{Ayudantía 09}
-\subtitle{}
+\subtitle{Euler-Fermat y Teorema Fundamental de la Aritmética}
 \date{2021-05-26}
 \course{IIC3253 -- Criptografía}
 \faculty{Escuela de Ingeniería}
@@ -13,7 +13,7 @@
 
 \ifx\condition\undefined
 \immediate\write18{ pdflatex -synctex=1 -output-directory="../Enunciados" --jobname="Enunciado\jobname" "\gdef\string\condition{0} \string\input\space\jobname"} 
-\immediate\write18{ pdflatex -synctex=1 -output-directory="../Soluciones" --jobname="Solucion\jobname" "\gdef\string\condition{1} \string\input\space\jobname"} 
+%\immediate\write18{ pdflatex -synctex=1 -output-directory="../Soluciones" --jobname="Solucion\jobname" "\gdef\string\condition{1} \string\input\space\jobname"} 
 
 \immediate\write18{ cd "../Enunciados" && rm *.aux *.log *.out}
 \immediate\write18{ cd "../Soluciones" && rm *.aux *.log *.out}
@@ -31,6 +31,101 @@
 
 \begin{document}
 \maketitle
+\section{Euler-Fermat}
+\subsection{Recordatorio}
+\begin{thm}[Inverso Modular]
+    Dado \(a\in\set{Z}\), existe \(a^{-1}\in\set{Z}\) tal que \(a\cdot a^{-1}\equiv1\mod n\) si y solo si \(\gcd(a,n)=1\).
+\end{thm}
+\begin{defn}[\(\set{Z}_n^*\)]
+    Se define \(\set{Z}_n^*\) como el conjunto \(\{a\in\set{Z}\mid 1\leq a<n\wedge\gcd(a,n)=1\}\).
+\end{defn}
+\begin{defn}[Función \(\varphi\)]
+    La función \(\varphi:\set{N}\rightarrow\set{N}\) se define como
+    \begin{equation*}
+        \varphi(n)=\abs{\set{Z}_n^*}.
+    \end{equation*}
+\end{defn}
+\subsection{Teorema Euler-Fermat}
+\begin{thm}[Euler-Fermat]
+    Dado \(a\in\set{Z}\) tal que \(\gcd(a,n)=1\), se tiene que
+    \begin{equation*}
+        a^{\varphi(n)}\equiv1\mod n
+    \end{equation*}
+\end{thm}
+\begin{proof}
+    Se toma la función
+    \begin{align*}
+        f_a:&\set{Z}_n^*\rightarrow\set{Z}_n^*\\
+        &x\mapsto (ax)\mod n
+    \end{align*}
+    y se nota que es una biyección, por lo que se tiene la siguiente congruencia:
+    \begin{align*}
+        x_1\cdot\ldots\cdot x_{\varphi(n)}&\equiv (ax_1)\cdot\ldots\cdot (ax_{\varphi(n)})\mod n\\
+        &\equiv a^{\varphi(n)}x_1\cdot\ldots\cdot x_{\varphi(n)}\mod n
+    \end{align*}
+    Multiplicando por los inversos de cada \(x_i\) a cada lado se llega a lo pedido.
+\end{proof}
+\begin{prob}
+    Demuestre que \(f_a\) es una biyección. (\textit{Hint: demuestre que \(f_{a^{-1}}\) es su inversa.})
+\end{prob}
+\begin{thm}
+    Dado \(p,q\) primos distintos se tiene que \(\varphi(p)=p-1\) y \(\varphi(pq)=(p-1)(q-1)\).
+\end{thm}
+\begin{proof}
+    El primer resultado es inmediato ya que para todo \(1\leq a<p\) se tiene que \(\gcd(a,p)=1\) por definición de primo. Para el segundo resultado, se nota que se pueden contar los \(a\) tal que \(\gcd(a,pq)>1\), estos son los números que son divisibles por \(p\) o por \(q\) que son menores a \(pq\), como el menor entero positivo divisible  por \(p\) y por \(q\) es \(pq\) se tiene que solo hay que contar enteros divisibles por \(p\) y después enteros divisibles por \(q\). Se nota que los enteros divisible por \(p\) son \(p,2p,\ldots, (q-1)p\), que son \(q-1\), y similarmente hay \(p-1\) divisibles por \(q\). Por lo que \(\varphi(pq)=(pq-1)-(q-1)-(p-1)=pq-p-q+1=(p-1)(q-1)\).
+\end{proof}
+\begin{prob}
+    Demuestre que \(\varphi(p^n)=p^{n-1}(p-1)\) para \(p\) primo.(\textit{Hint: cuente los que no son coprimos.})
+\end{prob}
+\section{Teorema Fundamental de la Aritmética}
+\begin{thm}
+    Dado \(a,b,c\in\set{Z}\) tales que \(\gcd(a,b)=1\) y \(a\mid bc\), entonces \(a\mid c\).
+\end{thm}
+\begin{proof}
+    Como \(a\mid bc\) se tiene que \(ak=bc\) para algún \(k\in\set{Z}\). Usando Bezout se tiene que \(ax+by=1\) para algunos \(x,y\in\set{Z}\), multiplicando todo por \(c\) se tiene que \(acx+bcy=c\) y reemplazando se tiene \(a(cx+ky)=c\), con lo que se concluye que \(a\mid c\).
+\end{proof}
+\begin{lem}
+    Dado \(p\) primo y \(a,b\in\set{Z}\), se tiene que si \(p\mid ab\) entonces \(p\mid a\) o \(p\mid b\).
+\end{lem}
+\begin{proof}
+    Si \(p\mid a\), se tiene el resultado. En otro caso, se tiene que \(\gcd(a,p)=1\), por lo que por el teorema anterior se tiene que \(p\mid b\).
+\end{proof}
+\begin{thm}[Teorema Fundamental de la Aritmética]
+    Todo entero descomposición en producto de primos, y es única salvo reordenamientos. 
+\end{thm}
+\begin{proof}
+    Para la existencia se usará inducción fuerte. El paso base es \(n=2\), se sabe que \(2\) es primo, por lo que se tiene el caso base. Dado \(n\) si es primo, se tiene lo pedido, si no, existen \(1<a,b<n\) tales que \(n=ab\), y por hipótesis inductiva se tiene que \(a=p_1\cdot\ldots\cdot p_k\) y \(b=q_1\cdot\ldots\cdot q_l\), por lo que \(ab=p_1\cdot\ldots\cdot p_k\cdot q_1\cdot\ldots\cdot q_l\), con lo que se tiene lo pedido.
 
+    Para la unicidad dado \(n\) se toman dos descomposiciones primas, \(n=p_1\cdot\ldots\cdot p_k=q_1\cdot\ldots\cdot q_l\). Dado \(p_1\), como \(p_1\mid n\) por el lema anterior se tiene que \(p_1\mid q_i\) para algún \(i\), y por definición de primo se tiene que \(p_1=q_i\), dividiendo ambos lados por \(p_1\) se tiene el mismo caso, pero con menos primos, por lo tanto se tiene lo pedido.
+\end{proof}
+\begin{remark}
+    Dado que los primos tienen un orden natural, hay una descomposición canónica de cada entero \(n\), donde \(n=p_1^{\alpha_1}\cdot\ldots\cdot p_k^{\alpha_k}\), \(\alpha_i\geq 0\) y \(p_i\) es el \(i\)-ésimo primo..
+\end{remark}
+\subsection{Aplicaciones y Problemas}
+\begin{prob}
+    Demuestre que dado \(a,b\in\set{Z}\), donde \(a=p_1^{\alpha_1}\cdot\ldots\cdot p_k^{\alpha_k}\) y \(b=p_1^{\beta}\cdot\ldots\cdot p_k^{\beta}\), se tiene que \(\gcd(a,b)=p_1^{\min(\alpha_1,\beta_1)}\cdot\ldots\cdot p_k^{\min(\alpha_k,\beta_k)}\).
+\end{prob}
+\begin{ejm}
+    Se tienen \(a=24\) y \(b=60\), se nota que \(\gcd(a,b)=12=2^2\cdot 3\), y que \(a=2^3\cdot 3\) y \(b=2^2\cdot3\cdot5\).
+\end{ejm}
+\begin{prob}
+    Dados \(a,b\in\set{Z}\) tales que \(\gcd(a,b)=1\) y \(ax=by\) demuestre que \(a\mid y\) y \(b\mid x\) usando TFA.
+\end{prob}
+\begin{proof}
+    Demostración sin TFA: Se nota que \(a\mid by\) por lo que por teorema demostrado anteriormente se tiene que \(a\mid y\), similarmente se tiene que \(b\mid x\).
+\end{proof}
+\begin{prob}
+    Demuestre usando TFA que si \(a^2\mid b^2\) entonces \(a\mid b\).
+\end{prob}
+
+
+\begin{prob}
+    Demuestre lo anterior sin TFA.
+\end{prob}
+
+
+\begin{prob}[Bonus]
+    Demuestre que existe una función \(f\) de \(\set{N}\) a las secuencias de naturales con finitos términos no ceros\footnote{De forma más precisa, al conjunto \(\{\{a_n\}_{n\in\set{N}}\mid \forall n\in\set{N}\, a_n\in\set{N}\text{ y para finitos \(n\) se tiene que }a_n\neq0\}\).} tal que \(f(a\cdot b)=f(a)+f(b)\), si y solo si se tiene TFA y existen infinitos primos.
+\end{prob}
 
 \end{document}
