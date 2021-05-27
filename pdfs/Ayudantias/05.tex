@@ -1,0 +1,36 @@
+\documentclass{ayudantia}
+
+\title{Ayudantía 05}
+\subtitle{}
+\date{2021-04-21}
+\course{IIC3253 -- Criptografía}
+\faculty{Escuela de Ingeniería}
+\department{Departamento de Ciencias de la Computación}
+% Comment for final compile
+\ifx\condition\undefined
+\def\condition{2}
+\fi
+
+\ifx\condition\undefined
+\immediate\write18{ pdflatex -synctex=1 -output-directory="../Enunciados" --jobname="Enunciado\jobname" "\gdef\string\condition{0} \string\input\space\jobname"} 
+\immediate\write18{ pdflatex -synctex=1 -output-directory="../Soluciones" --jobname="Solucion\jobname" "\gdef\string\condition{1} \string\input\space\jobname"} 
+
+\immediate\write18{ cd "../Enunciados" && rm *.aux *.log *.out}
+\immediate\write18{ cd "../Soluciones" && rm *.aux *.log *.out}
+
+\expandafter\stop
+\fi
+
+\ifcase\condition
+\excludecomment{ans}
+\or
+\includecomment{ans}
+\or
+\includecomment{ans}
+\fi
+
+\begin{document}
+\maketitle
+
+
+\end{document}
