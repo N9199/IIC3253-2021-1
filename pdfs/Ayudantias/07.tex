@@ -1,7 +1,7 @@
 \documentclass{ayudantia}
 
 \title{Ayudantía 07}
-\subtitle{}
+\subtitle{Generadores Pseudo-Aleatorios y Funciones One-Way}
 \date{2021-05-05}
 \course{IIC3253 -- Criptografía}
 \faculty{Escuela de Ingeniería}
@@ -31,6 +31,34 @@
 
 \begin{document}
 \maketitle
+\section{Generadores Pseudo-Aleatorios}
+\begin{defn}[Generador Pseudo-Aleatorio (PRG)]
+    Sea \(\ell(\cdot)\) un polinomio y sea \(G\) un algoritmo determinista en \texttt{P-TIME} tal que para toda entrada \(s\in\{0,1\}^n\), \(G\) devuelve un string de largo \(\ell(n)\). Se dice que \(G\) es PRG si:
+    \begin{enumerate}
+        \item (Expansión): \(\forall n\,\ell(n)>n\).
+        \item (Pseudo-Aleatoriedad): Para todo distinguidor en \texttt{RP-TIME} \(D\) se tiene que existe una función despreciable \(f\) tal que:
+        \begin{equation*}
+            \abs{\underset{r\leftarrow\{0,1\}^{\ell(n)}}{P}[D(r)=1]-\underset{s\leftarrow\{0,1\}^n}{P}[D(G(s))=1]}\leq f(n)
+        \end{equation*}
+    \end{enumerate}
+\end{defn}
+\begin{remark}
+    Se dice que \(\ell\) es ``el factor de expansión de \(G\)''.
+\end{remark}
+\begin{ejm}
+    Un \textbf{\underline{mal}} ejemplo es \(G(k)=(a_{\abs{k}}\cdot k+b_{\abs{k}})\mod c_{\abs{k}}\), donde \(k\in\{0,1\}^*\) y es interpretado como un número en binario, y donde \(G(k)\) se reexpresa como un string binario.
 
-
+    Para ver que es un mal ejemplo, primer notemos que \(\ell(n)=\abs{c_n}\), por lo que si \(\abs{c_n}>n\) se tiene \(1\), y esto es trivialmente cierto eligiendo \(c_n\) suficientemente grandes. Para \(2\), notemos que el objetivo del distinguidor es saber si la congruencia \(r\equiv a_n\cdot k+b_n\mod c_n\) tiene solución. Recordamos que existe un algoritmo en \texttt{P-TIME} que revisa si tiene solución, y si existe devuelve una solución, por lo que el distinguidor puede correr este algoritmo y retornar \(1\) cuando hay solución. Con lo anterior se tiene que 
+    \begin{align*}
+        \underset{r\leftarrow\{0,1\}^{\ell(n)}}{P}[D(r)=1]=\frac{S_n}{2^{\ell(n)}}\text{ y }\underset{s\leftarrow\{0,1\}^n}{P}[D(G(s))=1]=1,
+    \end{align*}
+    donde \(S_n\) es la cantidad de posibles congruencias que tienen soluciones \(k\) tales que \(\abs{k}=n\). Se sabe que \(S_n\leq 2^n\), por lo que se tiene
+    \begin{align*}
+        \underset{r\leftarrow\{0,1\}^{\ell(n)}}{P}[D(r)=1]&=\frac{S_n}{2^{\ell(n)}}\\
+        &\leq\frac{2^n}{2^{\ell(n)}}\\
+        &\leq\frac1{2^{\ell(n)-n}}\\
+        &\leq\frac12\\
+    \end{align*}
+    y así se llega a que \(\abs{\underset{r\leftarrow\{0,1\}^{\ell(n)}}{P}[D(r)=1]-\underset{s\leftarrow\{0,1\}^n}{P}[D(G(s))=1]}\geq\frac12\), por lo que no cumple 2.
+\end{ejm}
 \end{document}

@@ -1,0 +1,188 @@
+\documentclass{ayudantia}
+
+\title{Ayudantía 10}
+\subtitle{Test de Miller-Rabin}
+\date{2021-06-02}
+\course{IIC3253 -- Criptografía}
+\faculty{Escuela de Ingeniería}
+\department{Departamento de Ciencias de la Computación}
+% Comment for final compile
+\ifx\condition\undefined
+\def\condition{2}
+\fi
+
+\ifx\condition\undefined
+\immediate\write18{ pdflatex -synctex=1 -output-directory="../Enunciados" --jobname="Enunciado\jobname" "\gdef\string\condition{0} \string\input\space\jobname"} 
+\immediate\write18{ pdflatex -synctex=1 -output-directory="../Soluciones" --jobname="Solucion\jobname" "\gdef\string\condition{1} \string\input\space\jobname"} 
+
+\immediate\write18{ cd "../Enunciados" && rm *.aux *.log *.out}
+\immediate\write18{ cd "../Soluciones" && rm *.aux *.log *.out}
+
+\expandafter\stop
+\fi
+
+\ifcase\condition
+\excludecomment{ans}
+\or
+\includecomment{ans}
+\or
+\includecomment{ans}
+\fi
+
+\begin{document}
+\maketitle
+\section*{Historia}
+Un poco de historia sobre el algoritmo, en 1976 Miller invento una versión determinista del test, pero la correctitud del test dependía en una extensión de la Hipótesis de Riemann\footnote{\url{https://www.claymath.org/millennium-problems/riemann-hypothesis}}, por lo tanto tenía un uso limitado. Luego, en 1980 Rabin modifico el test para que fuera probabilista, pero que su correctitud no dependiera de alguna extensión de la Hipótesis de Riemann. Este último es el test moderno, y el que principalmente tratará la ayudantía.
+\section{Notación y Definiciones Preliminares}
+\begin{defn}[Enteros Modulo \(n\)]
+    Se define \(\set{Z}/n\set{Z}\), como las clases de equivalencia de los enteros respecto a la relación de congruencia modulo \(n\).
+    \begin{equation*}
+        \set{Z}/n\set{Z}=\{\overline{a}_n\mid a\in\set{Z}\}=\{\overline{0}_n,\ldots,\overline{n-1}_n\}
+    \end{equation*}
+    Además, se suma y multiplicación de la siguiente forma\footnote{Se deja como ejercicio verificar que todo está bien definido (i.e. son funciones bien definidas, y no dependen del representante de la clase de equivalencia).}:
+    \begin{align*}
+        \overline{a}_n+\overline{b}_n&=\overline{a+b}_n\\
+        \overline{a}_n\cdot\overline{b}_n&=\overline{a\cdot b}_n
+    \end{align*}
+\end{defn}
+\begin{defn}[Invertibles Modulo \(n\)]
+    Se define \(\paren{\set{Z}/n\set{Z}}^\times\) como los elementos de \(\set{Z}/n\set{Z}\) que tienen inverso.
+    \begin{equation*}
+        \paren{\set{Z}/n\set{Z}}^\times=\{a\in\set{Z}/n\set{Z}\mid \exists b\in\set{Z}/n\set{Z}\, ab=\overline{1}_n\}
+    \end{equation*}
+\end{defn}
+\begin{defn}[Orden]
+    Dado \(x\in\paren{\set{Z}/n\set{Z}}^\times\) se define \(\text{ord}(x)\) como el menor entero positivo \(k\) tal que \(x^k=\overline{1}_n\).
+    \begin{equation*}
+        \text{ord}(x)=\min\{k>0\mid x^k=\overline{1}_n\} 
+    \end{equation*} 
+\end{defn}
+\begin{defn}[Función Phi]
+    Se tiene que \(\varphi(n)=\abs{\paren{\set{Z}/n\set{Z}}^\times}\)\footnote{Está definición es equivalente a la dada anteriormente. Queda como ejercicio demostrar eso.}.
+\end{defn}
+\begin{remark}
+    Se usará un \underline{abuso} de notación, donde \(x\in\set{Z}/n\set{Z}\) se usará intercambiablemente con \(x\in\set{Z}\), donde \(x\) es un representante de la clase de equivalencia.
+\end{remark}
+\section{Resultados sin Demostración}
+Los siguientes resultados se darán sin demostración, o con un esbozo de demostración (terminar las demostraciones es un ejercicio \underline{\textbf{bonus}}).
+\begin{thm}[Teorema Chino del Resto (CRT)]
+    Dado \(n,m\in\set{N}\) tal que \(\gcd(n,m)=1\) existe una biyección natural que preserva suma y multiplicación entre \(\set{Z}/nm\set{Z}\) y \(\set{Z}/n\set{Z}\times\set{Z}/m\set{Z}\)\footnote{Aquí la suma y multiplicación son componente a componente.}.
+\end{thm}
+\begin{proof}
+    La siguiente función\footnote{Hay un inverso explicito de la función, ver \url{https://en.wikipedia.org/wiki/Chinese_remainder_theorem\#Case_of_two_moduli}.} cumple lo pedido:
+    \begin{align*}
+        f:&\set{Z}/nm\set{Z}\rightarrow \set{Z}/n\set{Z}\times\set{Z}/m\set{Z}\\
+        &x\mapsto\paren{x\mod n,x\mod m}
+    \end{align*}
+\end{proof}
+\begin{thm}[Lagrange (en \((\set{Z}/n\set{Z})^\times\))]
+    Para todo \(x\in(\set{Z}/n\set{Z})^\times\) se tiene que \(\text{ord}(x)\mid\varphi(n)\).
+\end{thm}
+\begin{thm}[\((\set{Z}/p^\alpha\set{Z})^\times\) es Ciclico]
+    Dado \(p\) primo impar, existe \(g\in(\set{Z}/p^\alpha\set{Z})^\times\) tal que para todo \(y\in(\set{Z}/p^\alpha\set{Z})^\times\) \(y=g^k\) para algún \(k\in\set{Z}\). Se dice que \(g\) genera \((\set{Z}/p^\alpha\set{Z})^\times\), o que \(g\) es un generador.
+\end{thm}
+\begin{cor}
+    Las soluciones de la ecuación \(x^k=1\) con \(x\in(\set{Z}/n\set{Z})^\times\) y \(n=p^\alpha\) corresponden naturalmente a soluciones de la congruencia \(ak\equiv 0\mod\varphi(n)\).
+\end{cor}
+\begin{proof}
+    Dado \(g\) generador y \(a\) solución de la congruencia, ver que \(g^a\) corresponde a una solución de la ecuación original.
+\end{proof}
+\begin{thm}[\(\varphi\) es Multiplicativa]
+    Dado \(n,m\in\set{Z}\) tales que \(\gcd(n,m)=1\) se tiene que \(\varphi(nm)=\varphi(n)\varphi(m)\).
+\end{thm}
+\begin{proof}
+    Usar CRT.
+\end{proof}
+\begin{cor}
+    Se tiene la siguiente igualdad \(\varphi(n)=\prod_{p\mid n}p^{\alpha_p-1}(p-1)\).
+\end{cor}
+\begin{proof}
+    Usar el teorema anterior y calcular \(\varphi(p^\alpha)\).
+\end{proof}
+\section{Test de Miller-Rabin}
+\begin{center}
+    \fbox{\begin{minipage}{25em}
+        \begin{center}
+            \large Test de Miller-Rabin \(D\)\vspace*{-2em}
+        \end{center}
+        \noindent\rule{25em}{0.4pt}
+
+        La entrada es \(n\in\set{Z}\) tal que \(n>1\) y \(k\in\set{N}\).
+        \begin{enumerate}
+            \item Si \(n\leq9\) se revisa si \(n\in\{2,3,5,7\}\), y se retorna ``primo'' o ``compuesto'' correspondientemente.
+            \item Si \(n>9\) y \(n\) es par, retornar es ``compuesto''.
+            \item Se escribe \(n=m2^k\), donde \(m\) es impar. Repetir lo siguiente \(t\) veces
+            \begin{enumerate}[label=\alph*)]
+                \item Se elige \(x\in(\set{Z}/n\set{Z})^\times\) al azar\footnotemark.
+                \item Se verifica que \(x\) cumple alguno de los siguientes, \(x^m=1\) o \(x^{m2^i}=-1\) para algún \(0\leq i<k\).
+                \item Si falla la verificación, se retorna ``compuesto''.
+            \end{enumerate}
+            \item Se retorna ``primo''.
+        \end{enumerate}
+    \end{minipage}}\footnotetext{Se elige \(x\in\set{Z}/n\set{Z}\) distinto de \(0\) y se calcula \(g=\gcd(x,n)\), si \(g\) no es \(1\) se retorna ``compuesto''.}
+    \begin{remark}
+        La parte b) se puede hacer usando ``binary exponentiation''. Con lo anterior, se tiene que el test tiene complejidad \(\BigO{t\cdot\paren{\log(n)}^3}\)\footnote{La complejidad de la multiplicación de números es considerada.}
+    \end{remark}
+\end{center}
+\begin{thm}
+    El test de Miller-Rabin no da falsos negativo.
+\end{thm}
+\begin{proof}
+    Sea \(p\) primo. Si \(p\leq9\) es obvio que Miller-Rabin retorna ``primo''. Si \(p>9\) entonces es impar, se escribe \(p-1=m2^k\), con \(m\) impar. Sea \(x\in(\set{Z}/p\set{Z})^\times\)\footnote{Como \(p\) es primo \((\set{Z}/p\set{Z})^\times=\set{Z}/p\set{Z}\setminus\{0\}\)}. Se nota que
+    \begin{equation*}
+        x^{p-1}=1
+    \end{equation*}
+    por el teorema de Euler-Fermat. Reescribiendo el exponente se tiene que
+    \begin{equation*}
+        x^{m2^k}=1.
+    \end{equation*}
+    Se usa el siguiente argumento recursivo para demostrar que \(x^m=1\) o \(x^{m2^i}=-1\) para algún \(0\leq i<k\), se nota que \(\paren{x^{m2^{l-1}}}^2-1=0\) tiene dos soluciones \(x^{m2^{l-1}}=\pm1\), si \(x^{m2^{l-1}}=-1\) se tiene lo pedido, si no se usa el argumento recursivo sobre \(x^{m2^{l-1}}-1=0\), para el caso base \(x^m-1=0\), se tiene que trivialmente se cumple lo pedido.
+\end{proof}
+\begin{thm}
+    Sea \(n>9\) entero compuesto impar. Se escribe \(n-1=2^km\), con \(m\) impar. Dado
+    \begin{equation*}
+        B=\{x\in(\set{Z}/n\set{Z})^\times\mid x^m=1\text{ o }x^{m2^i}=-1\text{ para algún }0\leq i<k\}
+    \end{equation*}
+    se tiene que
+    \begin{equation*}
+        \frac{\abs{B}}{\varphi(n)}\leq\frac14
+    \end{equation*}
+\end{thm}
+\begin{proof}
+    Sea \(2^l\) máximo tal que \(\forall p\mid n\) se tiene \(2^l\mid p-1\). Se define
+    \begin{equation*}
+        B'=\{x\in(\set{Z}/n\set{Z})^\times\mid x^{m2^{l-1}}=\pm1\}
+    \end{equation*}
+    Se quiere ver que \(B\subset B'\), dado \(x\in B\), se tienen dos casos, \(x^m=1\) y \(x^{m2^i}=-1\) para algún \(0\leq i<k\). En el primer caso trivialmente se tiene que \(x\in B'\). Para el segundo caso, se ve que \(x^{m2^i}\equiv-1\mod p\) para todo primo \(p\mid n\)\footnote{\((a\equiv b\mod n\wedge d\mid n)\implies a\equiv b\mod d\)}, por lo que \(\text{ord}(x)=2^{i+1}\) para todo \(p\mid n\). Ahora, por Lagrange se tiene que \(2^{i+1}\mid p-1\), más específicamente \(2^{i+1}\mid 2^l\), por lo que \(l\geq i+1\). Con lo anterior se ve que
+    \begin{equation*}
+        x^{m2^{l-1}}=(-1)^{m2^{l-i-1}}=(-1)^{2^{l-i-1}}
+    \end{equation*}
+    Por lo que \(x^{m2^{l-1}}=-1\) si y solo si \(l=i+1\) y es \(1\) si y solo si \(l>i+1\). Con lo que se tiene que \(x\in B'\).
+
+    Con lo anterior se llega a que \(\abs{B}\leq\abs{B'}\), y se quiere acotar \(\abs{B'}\). Notemos que \(\abs{B'}\) es la cantidad de soluciones de \(x^{m2^{l-1}}=\pm1\), para contar esto primero se contarán las soluciones de \(x^{m2^{l-1}}= 1\), usando CRT y contando las soluciones de \(x^{m2^{l-1}}\equiv 1\mod p^{\alpha_p}\) donde \(p^{\alpha_p}\) es la potencia exacta que divide a \(n\). Usando el corolario del Teorema 2.3, se tiene que las solución modulo \(p^{\alpha_p}\) son \(\gcd((p-1)p^{\alpha_p-1},m2^{l-1})\), que es \(\gcd(p-1,m)2^{l-1}\) ya que \(2^{l-1}\mid p-1\) y \(\gcd(p,m2^{l-1})=1\)\footnote{Notar que si \(p\mid n-1\) se tiene que \(p\mid 1\).}. Por lo tanto se tiene que
+    \begin{equation*}
+        \abs{\{x\in\paren{\set{Z/n\set{Z}}}^\times\mid x^{m2^{l-1}}=1\}}=\prod_{p\mid n}\gcd(p-1,m)2^{l-1},
+    \end{equation*}
+    y se puede usar el mismo argumento para ver que la cantidad de soluciones de \(x^{m2^l}\equiv 1\mod p^{\alpha_p}\) es \(\gcd(p-1,m)2^l\), y esa cantidad es el doble de la cantidad soluciones de \(x^{m2^{l-1}}\equiv 1\mod p^{\alpha_p}\), por lo que \(x^{m2^l}\equiv -1\mod p^{\alpha_p}\) tiene \(\gcd(p-1,m)2^{l-1}\) soluciones, juntando todo se llega a
+    \begin{equation*}
+        \abs{B'}=2\prod_{p\mid n}\gcd(p-1,m)2^{l-1}
+    \end{equation*}
+    con lo que
+    \begin{equation*}
+        \frac{\abs{B'}}{\varphi(n)}=2\prod_{p\mid n}\frac{\gcd(p-1,m)2^{l-1}}{(p-1)p^{\alpha_p-1}}.
+    \end{equation*}
+    Ahora, por contradicción se asume que \(\frac{\abs{B}}{\varphi(n)}>\frac14\), por lo tantos se tiene que \(\frac{\abs{B'}}{\varphi(n)}>\frac14\). Se nota que \(\gcd(p-1,m)2^{l-1}\mid (p-1)/2\), por lo que \(\frac{(p-1)p^{\alpha_p-1}}{\gcd(p-1,m)2^{l-1}}\geq 2p^{\alpha_p-1}\), por lo que \(\frac{\abs{B'}}{\varphi(n)}\leq 2^{1-t}\), donde \(t\) es la cantidad de divisores primos de \(n\). Esta desigualdad nos dice que \(t\leq2\)\footnote{Desarrollar \(\frac14<2^{1-t}\).}, por lo que tomamos el caso donde \(t=2\) y \(\alpha_p\geq 2\) para algún \(p\), usando la cota anterior se tiene que \(\frac{\abs{B'}}{\varphi(n)}\leq 2\cdot\frac13\cdot\frac14=\frac16\), por lo que \(\alpha_p=1\) para todo \(p\). Con lo anterior, y aún con \(t=2\), podemos reescribir la desigualdad a
+    \begin{equation*}
+        1\leq \frac{p-1}{\gcd(p-1,m)2^l}\cdot \frac{q-1}{\gcd(q-1,m)2^l}<2
+    \end{equation*}
+    y como \(\frac{p-1}{\gcd(p-1,m)2^l}\) y \(\frac{q-1}{\gcd(q-1,m)2^l}\) son enteros, entonces \(p-1=\gcd(p-1,m)2^l\) y \(q-1=\gcd(q-1,m)2^l\). Denotando \(m_p=\gcd(p-1,m)\) y \(m_q=\gcd(p-1,m)\), se ve que
+    \begin{align*}
+        pq&=1+m2^l\\
+        pq&\equiv 1+m2^l\mod m_p\\
+        -q&\equiv 1\mod m_p\\
+    \end{align*}
+    con lo que se tiene que \(m_p\mid q-1\), usando el mismo argumento con \(m_q\), se tiene \(m_q\mid p-1\), por lo que \(m_p=m_q\), más aún \(p=q\), pero eso contradice que \(t=2\).
+
+    Vemos el caso \(n=p^\alpha\), y recordamos la desigualdad \(\frac{(p-1)p^{\alpha_p-1}}{\gcd(p-1,m)2^l}\geq p^{\alpha_p-1}\), se nota entonces que \(p^{\alpha-1}<4\), por lo que \(p=3\) y \(1\leq\alpha\leq2\), por lo que \(n<9\), lo que es una contradicción.
+\end{proof}
+\end{document}
