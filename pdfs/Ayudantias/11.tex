@@ -1,0 +1,119 @@
+\documentclass{ayudantia}
+
+\title{Ayudantía 11}
+\subtitle{Grupos Cíclicos, Generadores y Logaritmo Discreto}
+\date{2021-06-15}
+\course{IIC3253 -- Criptografía}
+\faculty{Escuela de Ingeniería}
+\department{Departamento de Ciencias de la Computación}
+% Comment for final compile
+\ifx\condition\undefined
+\def\condition{2}
+\fi
+
+\ifx\condition\undefined
+\immediate\write18{ pdflatex -synctex=1 -output-directory="../Enunciados" --jobname="Enunciado\jobname" "\gdef\string\condition{0} \string\input\space\jobname"} 
+\immediate\write18{ pdflatex -synctex=1 -output-directory="../Soluciones" --jobname="Solucion\jobname" "\gdef\string\condition{1} \string\input\space\jobname"} 
+
+\immediate\write18{ cd "../Enunciados" && rm *.aux *.log *.out}
+\immediate\write18{ cd "../Soluciones" && rm *.aux *.log *.out}
+
+\expandafter\stop
+\fi
+
+\ifcase\condition
+\excludecomment{ans}
+\or
+\includecomment{ans}
+\or
+\includecomment{ans}
+\fi
+
+\begin{document}
+\maketitle
+\section{Grupos Cíclicos}
+
+\begin{defn}[Grupo]
+    Dado un conjunto \(G\) y una operación binaria \(\cdot :G\times G\rightarrow G\), se dice que \(\paren{G,\cdot}\) es un grupo sí:
+    \begin{enumerate}
+        \item Para todos \(a,b,c\in G\) se cumple que \((a\cdot b)\cdot c=a\cdot (b\cdot c)\).
+        \item Existe un elemento \(e\in G\) tal que para todo \(g\in G\) se tiene que \(g\cdot e=e\cdot g=g\). Este elemento se denota como \textit{la identidad}.
+        \item Para todo \(g\in G\) existe un elemento \(h\in G\) tal que \(h\cdot g=g\cdot h=e\). \(h\) se denota como el \textit{inverso} de \(g\) y generalmente se escribe como \(g^{-1}\).
+    \end{enumerate}
+\end{defn}
+\begin{remark}
+    Informalmente un grupo es conjunto con una operación ``decente''.
+\end{remark}
+\begin{remark}
+    Una forma general de tener una intuición de que es un grupo, es pensar que un grupo son las funciones que preservan la estructura de algún objeto. Por ejemplo, las simetrías de un polígono regular son un grupo con la operación de composición.
+\end{remark}
+\begin{prob}
+    Demuestre que la unicidad de la identidad y del inverso 
+\end{prob}
+\begin{prob}
+    Demuestre que \(S_n\) con la composición es un grupo. Más generalmente, sea \(A\) un conjunto demuestre que \(S_A\) con la composición es un grupo.
+\end{prob}
+
+\begin{defn}[Subgrupo]
+    Sea \(\paren{G,\cdot}\) un grupo y sea \(H\subseteq G\) un conjunto que es un grupo con la restricción de la operación \(\cdot\) a \(H\), se dice que \(H\) es un subgrupo de \(G\), y se denota como \(H \leq G\).
+\end{defn}
+\begin{defn}[Orden]
+    Se dice que el orden de un elemento \(g\in G\) es el menor entero positivo \(n\) tal que \(g^n=e\), además se dice que el orden de un grupo es \(\abs{G}\). Un grupo es finito si su orden es finito.
+\end{defn}
+\begin{prob}
+    Demuestre que en todo grupo el orden de \(ab\) es igual al orden de \(ba\).
+\end{prob}
+\begin{defn}[Grupo Cíclico]
+    Un grupo \(\paren{G,\cdot}\) es cíclico, si existe un elemento \(g\in G\) tal que para todo elemento \(h\in G\) existe un entero \(k\) tal que \(h=g^k\), donde \(g^k=\underbrace{g\cdot g\cdot...\cdot g}_\text{\(k\) veces}\). 
+\end{defn}
+\begin{remark}
+    En algún sentido un grupo cíclico finito es ``lo mismo'' que \(\paren{\set{Z}/n\set{Z},+}\) para algún \(n\).
+\end{remark}
+
+\begin{defn}[Grupo Generado]
+    Dado \(g\in G\) se dice que \(\angled{g}=\{g^k\mid k\in\set{Z}\}\) es el grupo generado por \(g\), y \(g\) se dice que es un generador.
+\end{defn}
+
+\begin{prob}
+    Sea \(G=\set{Z}/n\set{Z}\), demuestre que \(G\) tiene \(d(n)\) subgrupos distintos donde \(d(n)\) es la cantidad de divisores de \(n\). (\textit{Hint:} vea que todo subgrupo es cíclico y es generado por un divisor de \(n\).) 
+\end{prob}
+
+\begin{remark}
+    Todo grupo cíclico es grupo generado por alguno de sus elementos, en otras palabras para todo grupo cíclico existe un generador del grupo. (Demuestre esto.)
+\end{remark}
+
+\begin{ejm}
+    Tomar \(G=\set{Z}/n\set{Z}\) y \(\cdot=+\), se nota que \(\set{Z}/n\set{Z}\) es generado por \(1\), más aún se nota que todo elemento coprimo con \(n\)\footnote{Que su \(\gcd\) con \(n\) es \(1\).} es generador.
+\end{ejm}
+
+\begin{ejm}
+    Tomar \(G=\paren{\set{Z}/n\set{Z}}^\times\) y \(\cdot=\cdot\), con \(n=p^k\). Con números específicos se puede encontrar generadores, e.g. para \(n=9\) se tiene que \(2\) genera el grupo.
+\end{ejm}
+
+\begin{ejm}
+    Los ejemplos anteriores correspondían a grupos cíclicos finitos, el ejemplo clásico de grupo cíclico infinito es \(\paren{\set{Z},+}\), ya que \(1\) genera a todo \(\set{Z}\).
+\end{ejm}
+
+\begin{defn}[Isomorfismo]
+    Dado dos grupos \(\paren{G,\cdot}\) y \(\paren{H,\star}\), una biyección \(\varphi:G\rightarrow H\) se dice isomorfismo si para todo \(g,h\in G\) se tiene que \(\varphi(g\cdot h)=\varphi(g)\cdot \varphi(h)\). Si \(\varphi\) es isomorfismo se dice que \(G\) y \(H\) son isomorfos, y se denota como \(G\cong H\).
+\end{defn}
+\begin{prob}
+    Sea \(G\) un grupo cíclico de orden \(n\), demuestre que \(G\cong \set{Z}/n\set{Z}\). (Bonus: demuestre que hay exactamente \(\varphi(n)\) isomorfismos entre \(G\) y \(\set{Z}/n\set{Z}\).)
+\end{prob}
+\begin{prob}[Bonus]
+    Se define \(\text{Aut}(G)\) como el conjunto de isomorfismo de \(G\) en si mismo, demuestre que \(\text{Aut}(G)\) con la composición es un grupo. (Bonus: Demuestre que \(\text{Aut}(\set{Z}/n\set{Z})\cong (\set{Z}/n\set{Z})^*\).)
+\end{prob}
+\section{Logaritmo Discreto}
+En está sección se asume que todo grupo es cíclico.
+\begin{defn}[Logaritmo Discreto]
+    Dado \(G\) un grupo cíclico, \(g\) un generador de \(G\) y \(h\in G\), el entero \(k\) que soluciona la ecuación \(h=g^k\) se denota como \(log_g(h)\) y se dice que es el logaritmo discreto de \(h\) en base \(g\).
+\end{defn}
+
+\begin{ejm}
+    Sea \(G=\set{Z}/18\set{Z}\), \(g=5\) y \(h=3\), se quiere encontrar un \(k\) tal que ``\(g^k=h\)'', o en notación aditiva \(k\cdot g=h\), usando congruencias queremos un \(k\) tal que \(k\cdot 5\cong 3\mod 18\), por lo que se usa el \(\gcd\) extendido para calcular \(5^{-1}\), y vemos que \(k\cong 3\cdot 5^{-1}\cong 3\cdot 11\cong 15\mod 18\), por lo que \(k=18\) cumple.
+\end{ejm}
+
+\begin{ejm}
+    Sea \(G=\paren{\set{Z}/9\set{Z}}^*\), \(g=2\) y \(h\in\{1,2,4,5,7,8\}\), vemos que \(2^1=2,2^2=4,2^3=8,2^4=7,2^5=5\) y \(2^6=1\).
+\end{ejm}
+\end{document}
